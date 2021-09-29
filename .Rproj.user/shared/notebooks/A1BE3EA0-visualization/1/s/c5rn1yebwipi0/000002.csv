@@ -1,0 +1,8 @@
+"0","ggplot(data = Activity)+
+  geom_col(mapping = aes(Sleep_Amount, y= Calories, fill =Sleep_Amount))+
+  facet_grid(~DistanceCategory)+
+  labs(title = ""How much Calories burns affecting by Sleep Quality By Distance Categories"")+
+  theme(axis.text = element_text(angle = 45))
+"
+"2","Error in ggplot(data = Activity) : could not find function ""ggplot""
+"

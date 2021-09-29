@@ -1,0 +1,615 @@
+---
+title: "Bellabeat Product Analysis"
+author: "pritee kadam"
+date: "9/28/2021"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+---
+
+
+#  Bellabeat Products Analysis
+                     
+##      The problem statement
+ 
+  "Bellabeat, a high-tech manufacturer of health-focused products for women. Bellabeat wants to expand their business for one of their products
+ so they wants to analyse the usage of one of their products in order to gain insight into how people are already using their smart devices.Then, using this information,she(Urška Sršen, cofounder and Chief Creative Officer of Bellabeat) would like high-level recommendations for how these trends can inform Bellabeat marketing strategy"
+ 
+###  Key stakeholders:-
+
+ Urška Sršen: Bellabeat’s co-founder and Chief Creative Officer
+ Sando Mur: Mathematician and Bellabeat’s co-founder
+ Bellabeat marketing analytics team
+ 
+### Introduction:-
+ 
+  This is a capstone project for my Google Data Analytics Capstone. In this case study, I will be analyzing one of Bellabeat’s smart device data to gain insight into how consumers are using their smart devices, Bellabeat is a high-tech manufacturer of health focused products for women. The insights I discover will then help guide to decide or enhance marketing strategy for the company
+
+
+
+### 1)  Ask:-
+
+ * Key Objectives:
+ 1. What are some daily habit trends in smart devise usage?
+ 2. How could these daily habit trends apply to Bellabeat customers?
+ 3. How could these daily habit trends help influence the Bellabeat marketing strategy?
+ 
+### 2) Prepare:-
+
+    Data preparation:
+    
+     Source, Licensing, Privacy
+
+  Source: FitBit Fitness Tracker Data - (Dataset made available through              Mobius)
+  
+  License: CC0: Public Domain
+  
+  Privacy: This Kaggle data set contains personal fitness tracker from 30    
+        Fitbit users who consented to the submission of personal tracker data,including minute-level output for physical activity, heart rate, and sleep monitoring. It includes information about daily activity, steps, and heart rate that can be used to explore users’ habits. 
+
+   
+###  3) Process:
+
+#### importing necessory packages
+
+```{r}
+ if (!require('tidyverse'))
+ {
+  install.packages('tidyverse');
+   library(tidyverse);
+ }
+```
+
+```{r}
+if(!require('tidyverse'))
+{
+  install.packages('here');
+  library(here);
+}
+```
+
+```{r}
+if(!require('skimr'))
+{
+  install.packages('skimr');
+  library(skimr);
+}
+```
+
+```{r}
+if(!require('janitor'))
+{
+  install.packages('janitor');
+  library(janitor)
+} 
+```
+
+```{r}
+if(!require('lubridate'))
+{
+install.packages('lubridate');
+  library(lubridate)
+}  
+```
+
+```{r}
+if(!require('dplyr'))
+{
+install.packages('dplyr');
+  library(dplyr);
+}
+```
+
+```{r}
+if(!require('ggplot2'))
+{
+install.packages('ggplot2');
+  library(ggplot2);
+}
+```
+
+```{r}
+if(!require('tidyr'))
+{
+  install.packages('tidyr');
+  library(tidyr);
+}  
+```
+
+```{r}
+if(!require('corrplot'))
+{
+  install.packages('corrplot');
+  library(corrplot);
+} 
+```
+
+
+```{r}
+if(!require('ggpubr'))
+{
+install.packages('ggpubr');
+  library(ggpubr);
+}
+```
+
+```{r}
+  if(!require('chron'))
+{
+  install.packages('chron');
+  library(chron);
+}
+```
+
+```{r}
+if(!require('hms'))
+{
+  install.packages('hms');
+  library(hms);
+}
+```
+
+```{r}
+if(!require('kableExtra'))
+{
+  install.packages(kableExtra);
+  library(kableExtra);
+}
+```
+
+
+```{r}
+if(!require('magrittr'))
+{
+  install.packages('magrittr');
+  library(magrittr);
+}
+```
+
+```{r}
+if(!require('scales'))
+{
+  install.packages('scales');
+  library(scales);
+}
+```
+
+
+```{r}
+if(!require('devtools'))
+{
+install.packages('devtools');
+  library(devtools)
+}
+```
+
+```{r}
+if(!require('readxl'))
+{
+  install.packages('readxl');
+  library(readxl);
+}
+```
+  
+
+     As I explore through all the files present I found that much files's columns are already present in the dailyActivity_merged file so we are here taking only those files which we have to analyze so those files are:
+     dailyActivity_merged
+     hourlyIntensities_merged
+     heartrate_seconds_merged
+     sleepDay_merged
+     weightLogInfo_merged
+     
+###- importing files:
+```{r}
+     Activity <- read.csv("dailyActivity_merged.csv")
+```
+
+```{r}
+Hourly_Calories <- read.csv("hourlyCalories_merged.csv")
+```
+
+
+```{r}
+Hourly_Intensities <- read.csv("hourlyIntensities_merged.csv")
+```
+
+```{r}
+ Hourly_Steps <- read.csv("hourlySteps_merged.csv")
+```
+
+```{r}
+Heartrate_Seconds <- read.csv("heartrate_seconds_merged.csv")
+```
+
+```{r}
+Sleep_Day <- read.csv("sleepDay_merged.csv")
+```
+
+```{r}
+WeightLogInfo <- read.csv("weightLogInfo_merged.csv")
+```
+  
+ 
+
+### Exploring files-
+
+```{r}
+head(Activity)
+head(Hourly_Calories)
+head(Hourly_Intensities)
+head(Hourly_Steps)
+head(Heartrate_Seconds)
+head(Sleep_Day)
+head(WeightLogInfo)
+```
+
+ 
+### Checking the length of Id column
+
+```{r}  
+   length(unique(Activity$Id))
+   length(unique(Hourly_Intensities$Id))
+   length(unique(Heartrate_Seconds$Id))
+   length(unique(Sleep_Day$Id))
+   length(unique(WeightLogInfo$Id))
+   length(unique(Hourly_Calories$Id))
+   length(unique(Hourly_Steps$Id))
+```
+
+### Check for duplicates
+
+```{r}
+any(duplicated(Activity))
+any(duplicated(Hourly_Calories))
+any(duplicated(Hourly_Intensities))
+any(duplicated(Hourly_Steps))
+any(duplicated(Heartrate_Seconds))
+any(duplicated(Sleep_Day))
+any(duplicated(WeightLogInfo))
+```
+
+
+### remove duplicate from Sleep_Day 
+
+```{r}
+Sleep_Day <- distinct(Sleep_Day)
+any(duplicated(Sleep_Day))
+```
+
+ here in most of files we have unnecessory columns are present which we    don't have to use so we are going to delete them first
+
+
+```{r}
+Activity <- subset(Activity,select=-c(TrackerDistance,LoggedActivitiesDistance,SedentaryActiveDistance))
+
+head(Activity)
+
+WeightLogInfo <- subset(WeightLogInfo,select=-c(WeightPounds,Id))
+head(WeightLogInfo)
+```
+
+###  1. change the data type from char to date of ActivityDate and Adding Day_of_Week column to Activity : 
+
+```{r}
+Activity <- Activity %>%
+mutate(ActivityDate = mdy(ActivityDate), Day_of_Week = weekdays(ActivityDate))
+```
+
+### let's check the added column in Activity dataframe
+```{r}
+head(Activity)
+```
+
+
+### add new columnSleep_Amount to Sleep_Day dataframe 
+```{r}
+Sleep_Day = Sleep_Day %>% 
+mutate(Sleep_Amount = case_when(TotalMinutesAsleep/60>=6.0 & TotalMinutesAsleep/60<=9.0   ~ "Good Sleep",
+    TotalMinutesAsleep/60<6.0 ~ "Under Sleep", 
+    TotalMinutesAsleep/60>9.0 ~ "Over sleep"))
+```
+
+### let's see the data
+```{r}
+head(Sleep_Day)
+```
+
+
+### we are going to delete some columns from Sleep_Day dataframe because we do't need it
+
+```{r}
+Sleep_Day <- subset(Sleep_Day,select=-c(SleepDay,TotalSleepRecords,TotalTimeInBed))
+```
+
+### Let's check the dataframe
+```{r}
+head(Sleep_Day)
+```
+
+
+### since Id is in dbl data type we have to convert it into character type of all dataframes
+
+```{r}
+Activity <- mutate(Activity, Id=as.character('Id'))
+Hourly_Intensities <-mutate(Hourly_Intensities,Id=as.character('Id'))
+Hourly_Calories <- mutate(Hourly_Calories,Id=as.character('Id'))
+Hourly_Steps <- mutate(Hourly_Steps,Id=as.character('Id'))
+Heartrate_Seconds <- mutate(Heartrate_Seconds,Id=as.character('Id'))
+Sleep_Day <- mutate(Sleep_Day,Id=as.character('Id'))
+WeightLogInfo <-mutate(WeightLogInfo,Id=as.character('Id'))
+```
+
+
+### check it
+```{r}
+summary(Activity)
+```
+
+
+### changing data type of date column
+
+```{r}
+#Hourly_Calories
+Hourly_Calories$ActivityHour=as.POSIXct(Hourly_Calories$ActivityHour, format="%m/%d/%Y %I:%M:%S %p", tz=Sys.timezone())
+Hourly_Calories$ActivityHour <- format(Hourly_Calories$ActivityHour, format = "%m/%d/%y")
+
+#Heartrate_Seconds
+Heartrate_Seconds$Time=as.POSIXct(Heartrate_Seconds$Time, format="%m/%d/%Y %I:%M:%S %p", tz=Sys.timezone())
+Heartrate_Seconds$Time <- format(Heartrate_Seconds$Time, format = "%m/%d/%y")
+
+# WeightLogInfo
+WeightLogInfo$Date=as.POSIXct(WeightLogInfo$Date, format="%m/%d/%Y %I:%M:%S %p", tz=Sys.timezone())
+WeightLogInfo$Date <- format(WeightLogInfo$Date, format = "%m/%d/%y")
+
+#hourly_Intensities
+Hourly_Intensities$ActivityHour=as.POSIXct(Hourly_Intensities$ActivityHour, format="%m/%d/%Y %I:%M:%S %p", tz=Sys.timezone())
+Hourly_Intensities$ActivityHour <- format(Hourly_Intensities$ActivityHour, format = "%H:%M:%S")
+Hourly_Intensities$ActivityHour <- format(Hourly_Intensities$ActivityHour, format = "%m/%d/%y")
+```
+
+
+```{r}
+WeightLogInfo$Date <- as.Date(WeightLogInfo$Date)
+```
+
+```{r}
+head(WeightLogInfo)
+```
+
+```{r}
+Heartrate_Seconds$Time <-as.Date(Heartrate_Seconds$Time)
+```
+
+```{r}
+Hourly_Calories$ActivityHour <-as.Date(Hourly_Calories$ActivityHour)
+```
+
+```{r}
+head(Hourly_Calories)
+```
+
+
+## Share
+
+```{r}
+ggplot(data=Activity,aes(x=TotalSteps,y=Calories,color=Calories))+geom_point()+ ggtitle("Calories Burned depending on the Steps taken")
+```
+
+## Observation
+
+we can say smart devices works very good on total steps taken and calories burned
+
+```{r}
+Activity <- merge(Activity,Sleep_Day,by="Id")
+```
+
+```{r}
+colnames(Activity)
+```
+
+```{r}
+Activity <- Activity %>%
+  mutate(DistanceCategory= case_when(
+    Activity$TotalDistance < 4500 ~ "LowActive",
+    Activity$TotalDistance >= 5000 & .$TotalDistance < 6000 ~ "AverageActive",
+    Activity$TotalDistance >= 6500 & .$TotalDistance < 7000 ~ "MorethanAverageActive",
+    Activity$TotalDistance > 7500 ~ "VeryActive"
+  ))
+```
+
+
+```{r}
+ggplot(data = Activity)+
+  geom_col(mapping = aes(Sleep_Amount, y= Calories, fill =Sleep_Amount))+
+  facet_grid(~DistanceCategory)+
+  labs(title = "How much Calories burns affecting by Sleep Quality By Distance Categories")+
+  theme(axis.text = element_text(angle = 45))
+```
+
+## Observations
+  we can see the smart device works very well on sleep data and calories burned
+
+```{r}
+ggplot(data = Activity)+
+  geom_col(mapping = aes(Day_of_Week, y=TotalSteps, fill =Day_of_Week))+
+  facet_grid(~DistanceCategory)+
+  labs(title = "How much Steps taken on which day of week")+
+  theme(axis.text = element_text(angle = 45))
+```
+
+
+Observations_ by data viz we can say on sunday there are less data for totalsteps taken due to holiday on tuesday again back to routine work so good steps are taken and on other days average steps are taken
+
+## Recommendations:
+
+The app which is made must have to update to track all the data which is needed from the smart devices.
+
+So I would like to suggest the company must have to work on the app to get these information consistently and accurately.
+
+Because the smart devices are rooted to the mobile to track the information from the consumers through the smart devices.
+
+The age of the consumer not tracked so I would like to add the age data to this app to get accurate results.
+
+
+
+### 2. Add new column TotalActiveMinutes to Activity which is the sum of all three ActiveMinutes columns:
+
+```{r}
+Activity <- Activity %>%
+  rowwise() %>%
+  mutate(TotalActiveMinutes = sum(c(VeryActiveMinutes, FairlyActiveMinutes, LightlyActiveMinutes)))
+```
+
+### Next, I created new columns with categories in datasets
+
+### 1. Sleep_Day
+
+```{r}
+Sleep_Day = Sleep_Day %>% mutate(Sleep_Amount = case_when(TotalMinutesAsleep/60>=6.0 & TotalMinutesAsleep/60<=9.0   ~ "Good Sleep",
+    TotalMinutesAsleep/60<6.0 ~ "Under Sleep", 
+    TotalMinutesAsleep/60>9.0 ~ "Over sleep"))
+    
+   New_Weight <- WeightLogInfo %>%
+     select(Id,Date,WeightKg,BMI)
+```
+
+### since Id is in dbl data type we have to convert it into character type of all dataframes
+
+```{r}
+Activity <- mutate(Activity, Id=as.character('Id'))
+Hourly_Intensities <-mutate(Hourly_Intensities,Id=as.character('Id'))
+Hourly_Calories <- mutate(Hourly_Calories,Id=as.character('Id'))
+Hourly_Steps <- mutate(Hourly_Steps,Id=as.character('Id'))
+Heartrate_Seconds <- mutate(Heartrate_Seconds,Id=as.character('Id'))
+Sleep_Day <- mutate(Sleep_Day,Id=as.character('Id'))
+WeightLogInfo <-mutate(WeightLogInfo,Id=as.character('Id'))
+```
+
+### check it
+```{r}
+summary(Activity)
+```
+     
+     
+```{r}
+  Activity = Activity %>% 
+  mutate(Steps_Amount = case_when(TotalSteps<=4500 ~ "Less Walker",
+    TotalSteps>4000 & TotalSteps <=9000 ~ "Good Walker", TotalSteps>9000 & TotalSteps<=12000 ~ "Better Walker",
+    TotalSteps>12000 ~ "Best Walker"))
+```
+
+     
+     
+    
+```{r}
+New_Weight = New_Weight %>% 
+mutate(Weight_Amount = case_when(BMI <= 18.5 ~ "UnderWeight", BMI >= 18.6 & BMI <= 24.9 ~ "NormalWeight", BMI >= 25 & BMI <= 29.9 ~ "OverWeight", BMI >= 30 ~ "Obesity"))
+```
+
+```{r}
+Heartrate_Seconds = Heartrate_Seconds %>%
+mutate(Heartrate_Amount = case_when(Value <= 80 ~ "Normal B.P.", 
+Value >= 81 ~ "High B.P."))
+```
+
+```{r}
+Activity = Activity %>% mutate(Burned_Calories = case_when(Calories<=1800 ~ "Low", Calories>1800 & Calories<=2200 ~ "Medium",
+    Calories>2200 & Calories<=2600 ~ "High", Calories>2600 ~ "Very High"))
+```
+
+### 4. Sedentary Time
+
+```{r}
+Activity = Activity %>% 
+  mutate(Sedentary_Time = case_when(SedentaryMinutes  > 626 ~ "Good",
+    SedentaryMinutes < 627 & SedentaryMinutes  ~ "Good", SedentaryMinutes/60>10 & SedentaryMinutes/60<=12 ~ "Bad",
+    SedentaryMinutes/60>12 ~ "Very Bad"))
+```
+
+### changing data type of date column
+
+### Hourly_Calories
+```{r}
+Hourly_Calories$ActivityHour=as.POSIXct(Hourly_Calories$ActivityHour, format="%m/%d/%Y %I:%M:%S %p", tz=Sys.timezone())
+Hourly_Calories$ActivityHour <- format(Hourly_Calories$ActivityHour, format = "%m/%d/%y")
+```
+
+### Heartrate_Seconds
+```{r}
+Heartrate_Seconds$Time=as.POSIXct(Heartrate_Seconds$Time, format="%m/%d/%Y %I:%M:%S %p", tz=Sys.timezone())
+Heartrate_Seconds$Time <- format(Heartrate_Seconds$Time, format = "%m/%d/%y")
+```
+
+### WeightLogInfo
+
+```{r}
+WeightLogInfo$Date=as.POSIXct(WeightLogInfo$Date, format="%m/%d/%Y %I:%M:%S %p", tz=Sys.timezone())
+WeightLogInfo$Date <- format(WeightLogInfo$Date, format = "%m/%d/%y")
+```
+
+### hourly_Intensities
+```{r}
+Hourly_Intensities$ActivityHour=as.POSIXct(Hourly_Intensities$ActivityHour, format="%m/%d/%Y %I:%M:%S %p", tz=Sys.timezone())
+Hourly_Intensities$ActivityHour <- format(Hourly_Intensities$ActivityHour, format = "%H:%M:%S")
+Hourly_Intensities$ActivityHour <- format(Hourly_Intensities$ActivityHour, format = "%m/%d/%y")
+head(WeightLogInfo)
+```
+
+```{r}
+WeightLogInfo$Date <- as.Date(WeightLogInfo$Date)
+head(WeightLogInfo)
+```
+
+```{r}
+Heartrate_Seconds$Time <-as.Date(Heartrate_Seconds$Time)
+```
+
+## Visualizing data:
+```{r}
+ggplot(data=Activity,aes(x=TotalSteps,y=Calories,color=Calories))+geom_point()+ ggtitle("Calories Burned depending on the Steps taken")
+
+Activity <- merge(Activity,Sleep_Day,by="Id")
+colnames(Activity)
+
+Activity <- Activity %>%
+  mutate(DistanceCategory= case_when(
+    Activity$TotalDistance < 4500 ~ "LowActive",
+    Activity$TotalDistance >= 5000 & .$TotalDistance < 6000 ~ "AverageActive",
+    Activity$TotalDistance >= 6500 & .$TotalDistance < 7000 ~ "MorethanAverageActive",
+    Activity$TotalDistance > 7500 ~ "VeryActive"
+  ))
+```
+
+
+```{r}
+ggplot(data = Activity)+
+  geom_col(mapping = aes(Sleep_Amount, y= Calories, fill =Sleep_Amount))+
+  facet_grid(~DistanceCategory)+
+  labs(title = "How much Calories burns affecting by Sleep Quality By Distance Categories")+
+  theme(axis.text = element_text(angle = 45))
+```
+
+### Observations-
+we can see the smart device works very well on sleep data and calories burned
+
+
+```{r}
+ggplot(data = Activity)+
+  geom_col(mapping = aes(Day_of_Week, y=TotalSteps, fill =Day_of_Week))+
+  facet_grid(~DistanceCategory)+
+  labs(title = "How much Steps taken on which day of week")+
+  theme(axis.text = element_text(angle = 45))
+```
+
+Observations_ by data viz we can say on sunday there are less data for totalsteps taken due to holiday on tuesday again back to routine work so good steps are taken and on other days average steps are taken
+
+### Recommendations:
+
+The app which is made must have to update to track all the data which is needed from the smart devices.
+
+So I would like to suggest the company must have to work on the app to get these information consistently and accurately.
+
+Because the smart devices are rooted to the mobile to track the information from the consumers through the smart devices.
+
+The age of the consumer not tracked so I would like to add the age data to this app to get accurate results. 

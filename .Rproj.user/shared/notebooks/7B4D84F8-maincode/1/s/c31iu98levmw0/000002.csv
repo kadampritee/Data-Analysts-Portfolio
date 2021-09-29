@@ -1,0 +1,7 @@
+"0","if(!require('readxl'))"
+"0","{"
+"0","  install.packages('readxl');"
+"0","  library(readxl);"
+"0","}"
+"2","Loading required package: readxl
+"

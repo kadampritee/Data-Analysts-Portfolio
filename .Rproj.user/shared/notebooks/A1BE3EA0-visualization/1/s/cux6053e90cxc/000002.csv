@@ -1,0 +1,5 @@
+"0","Activity <- Activity %>%"
+"0","mutate(ActivityDate = mdy(ActivityDate), Day_of_Week = weekdays(ActivityDate))"
+"2","Error in Activity %>% mutate(ActivityDate = mdy(ActivityDate), Day_of_Week = weekdays(ActivityDate)) : 
+  could not find function ""%>%""
+"

@@ -1,0 +1,5 @@
+"0","Activity <- mutate(Activity, Id=as.character('Id'))"
+"0","Hourly_Intensities <-mutate(Hourly_Intensities,Id=as.character(Id))"
+"2","Error in mutate(Hourly_Intensities, Id = as.character(Id)) : 
+  object 'Hourly_Intensities' not found
+"
